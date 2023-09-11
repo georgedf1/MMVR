@@ -48,7 +48,7 @@ namespace MotionMatching
 
                 for (int j = 0; j < FeatureSize; ++j)
                 {
-                    float feature = Features[i * FeatureSize + j];
+                    float feature = Features[i * FeatureSize + j]; // feature element may be a better name
                     LargeBoundingBoxMin[iLargeIndex + j] = math.min(LargeBoundingBoxMin[iLargeIndex + j], feature);
                     LargeBoundingBoxMax[iLargeIndex + j] = math.max(LargeBoundingBoxMax[iLargeIndex + j], feature);
                     SmallBoundingBoxMin[iSmallIndex + j] = math.min(SmallBoundingBoxMin[iSmallIndex + j], feature);

@@ -7,11 +7,14 @@ using MotionMatching;
 
 using TrajectoryFeature = MotionMatching.MotionMatchingData.TrajectoryFeature;
 
+[RequireComponent(typeof(VRDirectionPredictor))]
 public class VRCharacterController : MotionMatchingCharacterController
 {
     [Header("Input Devices")]
     public Transform HMDDevice;
 
+    [Header("POSE ESTIM")] 
+    public bool UsePoseEstim;
     // General ----------------------------------------------------------
     [Header("General")]
     public bool UseHMDForward = false;
@@ -290,7 +293,7 @@ public class VRCharacterController : MotionMatchingCharacterController
             }
         }
 
-        /* https://theorangeduck.com/page/spring-roll-call#controllers */
+        // https://theorangeduck.com/page/spring-roll-call#controllers
         public void PredictPositions(float3 currentPos, float3 desiredVelocity, float averagedDeltaTime)
         {
             int lastPredictionFrames = 0;
