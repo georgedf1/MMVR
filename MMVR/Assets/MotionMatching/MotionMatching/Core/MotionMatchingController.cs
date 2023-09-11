@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using H2D;
+using H2D.MediaPipe;
 using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections;
@@ -16,6 +18,10 @@ namespace MotionMatching
     {
         public event Action OnSkeletonTransformUpdated;
 
+        [Header("Pose Estimation")] 
+        [SerializeField] private bool usePoseEstimation;
+        [SerializeField] private PoseAligner poseEstimationAligner;
+        [Header("MM")]
         public MotionMatchingCharacterController CharacterController;
         public MotionMatchingData MMData;
         public Calibrator Calibrator;
@@ -312,9 +318,29 @@ namespace MotionMatching
                 currentFeatureSetIndex = SquatIndex; // SquatIndex - 1 + 1
             }
 
+            // NOTE(gf321): this odd stuff below is to move the feature to the appropriate normalised space (e.g. squat to normal)
             // Init Query Vector (with previous information)
             previousFeatureSet.GetFeature(QueryFeature, CurrentFrame);
             previousFeatureSet.DenormalizeFeatureVector(QueryFeature);
+            
+            // NOTE(gf321): Overwriting foot position features 
+            if (usePoseEstimation)
+            {
+                Vector3[] alignedLandmarks = poseEstimationAligner.GetAlignedLandmarkPositions();
+                
+                Vector3 leftFootPosWorld = alignedLandmarks[(byte)LandmarkType.LeftHeel];
+                float3 leftFootPosLocal = GetPositionLocalCharacter(leftFootPosWorld);
+                QueryFeature[currentFeatureSet.PoseOffset + 0] = leftFootPosLocal.x;
+                QueryFeature[currentFeatureSet.PoseOffset + 1] = leftFootPosLocal.y;
+                QueryFeature[currentFeatureSet.PoseOffset + 2] = leftFootPosLocal.z;
+                
+                Vector3 rightFootPosWorld = alignedLandmarks[(byte)LandmarkType.RightHeel];
+                float3 rightFootPosLocal = GetPositionLocalCharacter(rightFootPosWorld);
+                QueryFeature[currentFeatureSet.PoseOffset + 3] = rightFootPosLocal.x;
+                QueryFeature[currentFeatureSet.PoseOffset + 4] = rightFootPosLocal.y;
+                QueryFeature[currentFeatureSet.PoseOffset + 5] = rightFootPosLocal.z;
+            }
+            
             // Now Current Feature Set
             currentFeatureSet.NormalizeFeatureVector(QueryFeature);
             FillTrajectory(QueryFeature, currentFeatureSet);

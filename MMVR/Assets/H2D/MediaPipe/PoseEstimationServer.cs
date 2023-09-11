@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace H2D.MediaPipe
 {
-    public enum LandmarkType
+    public enum LandmarkType : byte
     {
         Nose = 0,
         LeftEyeInner = 1,
@@ -156,7 +156,7 @@ namespace H2D.MediaPipe
                     _client = _listener.AcceptTcpClient();
                     _networkStream = _client.GetStream();
                     _reader = new BinaryReader(_networkStream);
-                    onConnect();
+                    if (onConnect != null) onConnect();
                     Debug.Log("PoseEstimationServer Connected");
                 }
                 else
@@ -169,7 +169,7 @@ namespace H2D.MediaPipe
             if (_client.Client.Poll(pollWaitTime, SelectMode.SelectRead) 
                 && _client.Available == 0)
             {
-                onDisconnect();
+                if (onDisconnect != null) onDisconnect();
                 Debug.Log("PoseEstimationServer Disconnected");
                 _client = default;
                 return;

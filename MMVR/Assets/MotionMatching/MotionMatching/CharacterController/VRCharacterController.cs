@@ -12,9 +12,7 @@ public class VRCharacterController : MotionMatchingCharacterController
 {
     [Header("Input Devices")]
     public Transform HMDDevice;
-
-    [Header("POSE ESTIM")] 
-    public bool UsePoseEstim;
+    
     // General ----------------------------------------------------------
     [Header("General")]
     public bool UseHMDForward = false;
