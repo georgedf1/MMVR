@@ -232,6 +232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jointDiameter: 0.04
   boneDiameter: 0.03
+  disabledBones: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a000000
   skeletonMaterial: {fileID: 2100000, guid: 1877d65f0c2271345b4cca06b8ff9ba0, type: 2}
 --- !u!4 &54951721
 Transform:
@@ -246,7 +247,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &74260440 stripped
 Transform:
@@ -362,7 +363,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &214933636 stripped
 Transform:
@@ -709,8 +710,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c61468b8454f5ae4f906e45c7a7fec1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usePoseEstimation: 0
-  poseEstimationAligner: {fileID: 0}
+  usePoseEstimation: 1
+  poseEstimationAligner: {fileID: 1665827514}
   CharacterController: {fileID: 275778173}
   MMData: {fileID: 11400000, guid: a3adc94482efd8f47894c74d70aa0da0, type: 2}
   Calibrator: {fileID: 1725389248}
@@ -729,7 +730,7 @@ MonoBehaviour:
   FootUnlockDistance: 0.2
   InertializeHalfLife: 0.1
   Responsiveness: 1
-  Quality: 1
+  Quality: 0.5
   FeatureWeights:
   - 1
   - 1
@@ -1357,6 +1358,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jointDiameter: 0.04
   boneDiameter: 0.03
+  disabledBones: 
   skeletonMaterial: {fileID: 2100000, guid: a64c5cc733b1c414b8fdd0cafa415876, type: 2}
 --- !u!4 &1561697820
 Transform:
@@ -1366,12 +1368,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1561697818}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 1, z: -2}
+  m_LocalScale: {x: 1, y: -1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1568877325 stripped
 GameObject:
@@ -1408,13 +1410,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poseScaleFactor: 1.1
-  poseCameraRotation: {x: 0, y: 0, z: 0, w: 0}
-  hmdToHeadTrackerOffset: {x: 0, y: 0, z: 0}
+  poseCameraRotation: {x: 0.1305262, y: 0, z: 0, w: 0.9914449}
+  hmdToHeadTrackerOffset: {x: 0, y: 0, z: -0.1}
   leftCtrlToLeftHandOffset: {x: 0, y: 0, z: 0}
   rightCtrlToRightHandOffset: {x: 0, y: 0, z: 0}
-  hmdTm: {fileID: 40837619}
-  leftHandTm: {fileID: 315907616}
-  rightHandTm: {fileID: 1132669540}
+  poseProvider: {fileID: 1697054132}
   originalSkeleton: {fileID: 1561697819}
   alignedSkeleton: {fileID: 54951720}
 --- !u!4 &1665827515
@@ -1430,7 +1430,63 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1697054131
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1697054133}
+  - component: {fileID: 1697054132}
+  m_Layer: 0
+  m_Name: PoseProvider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1697054132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1697054131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b2487fa2aac46f097479011f8b9fdcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mode: 0
+  recording: {fileID: 4900000, guid: 2b3df310bfe54724888fa415a9d3e607, type: 3}
+  loop: 1
+  simHmdCorrection: {x: 0, y: 0, z: 0, w: 1}
+  simLeftCtrlCorrection: {x: 0, y: 0, z: 0.70710677, w: 0.70710677}
+  simRightCtrlCorrection: {x: 0, y: 0, z: -0.70710677, w: 0.70710677}
+  simHmdTm: {fileID: 1364905911}
+  liveHmdTm: {fileID: 40837619}
+  simLeftCtrlTm: {fileID: 230089936}
+  liveLeftCtrlTm: {fileID: 315907616}
+  simRightCtrlTm: {fileID: 1288274719}
+  liveRightCtrlTm: {fileID: 1132669540}
+--- !u!4 &1697054133
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1697054131}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.9369789, y: 0.46141818, z: -0.47706255}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1725389247
 GameObject:
@@ -1515,7 +1571,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SimulationBone: {fileID: 1786070640}
-  HMDDevice: {fileID: 446502067}
+  HMDDevice: {fileID: 40837619}
   UseHMDForward: 0
   ResponsivenessPositions: 0.7
   ResponsivenessDirections: 0.7
@@ -1598,8 +1654,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c61468b8454f5ae4f906e45c7a7fec1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usePoseEstimation: 0
-  poseEstimationAligner: {fileID: 0}
+  usePoseEstimation: 1
+  poseEstimationAligner: {fileID: 1665827514}
   CharacterController: {fileID: 1783246766}
   MMData: {fileID: 11400000, guid: a3adc94482efd8f47894c74d70aa0da0, type: 2}
   Calibrator: {fileID: 1725389248}
@@ -1608,7 +1664,7 @@ MonoBehaviour:
   SearchTime: 0.1388889
   UseBVHSearch: 1
   Inertialize: 1
-  FootLock: 1
+  FootLock: 0
   FootUnlockDistance: 0.2
   InertializeHalfLife: 0.1
   Responsiveness: 1

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace H2D.MediaPipe
@@ -8,6 +9,7 @@ namespace H2D.MediaPipe
         [Header("Config")]
         [SerializeField, Min(float.Epsilon)] private float jointDiameter;
         [SerializeField,Min(float.Epsilon)] private float boneDiameter;
+        [SerializeField] private List<int> disabledBones;
 
         [Header("Wiring")] 
         [SerializeField] private Material skeletonMaterial;
@@ -72,7 +74,7 @@ namespace H2D.MediaPipe
             new (30, 32),
             new (32, 28),
         };
-
+        
         private enum DebugPrimitiveType
         {
             Joint,
@@ -113,12 +115,20 @@ namespace H2D.MediaPipe
             {
                 _joints[i] = CreateDebugPrimitive(DebugPrimitiveType.Joint);
                 _joints[i].transform.parent = transform;
+                if (disabledBones.Contains(i))
+                {
+                    _joints[i].SetActive(false);
+                }
             }
 
             for (int i = 0; i < NumBones; i++)
             {
                 _bones[i] = CreateDebugPrimitive(DebugPrimitiveType.Bone);
                 _bones[i].transform.parent = transform;
+                if (disabledBones.Contains(BoneConnectivity[i].I) || disabledBones.Contains(BoneConnectivity[i].J))
+                {
+                    _bones[i].SetActive(false);
+                }
             }
         }
 

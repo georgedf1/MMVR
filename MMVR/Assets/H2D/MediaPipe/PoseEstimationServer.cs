@@ -82,9 +82,9 @@ namespace H2D.MediaPipe
         public delegate void OnConnect();
         public delegate void OnDisconnect();
         public delegate void OnPoseReceived();
-        public event OnConnect onConnect;
-        public event OnDisconnect onDisconnect;
-        public event OnPoseReceived onPoseReceived;
+        public event OnConnect OnConnectEvent;
+        public event OnDisconnect OnDisconnectEvent;
+        public event OnPoseReceived OnPoseReceivedEvent;
 
         public Vector3 GetLandmarkPosInCamera(LandmarkType type)
         {
@@ -156,7 +156,7 @@ namespace H2D.MediaPipe
                     _client = _listener.AcceptTcpClient();
                     _networkStream = _client.GetStream();
                     _reader = new BinaryReader(_networkStream);
-                    if (onConnect != null) onConnect();
+                    if (OnConnectEvent != null) OnConnectEvent();
                     Debug.Log("PoseEstimationServer Connected");
                 }
                 else
@@ -169,7 +169,7 @@ namespace H2D.MediaPipe
             if (_client.Client.Poll(pollWaitTime, SelectMode.SelectRead) 
                 && _client.Available == 0)
             {
-                if (onDisconnect != null) onDisconnect();
+                if (OnDisconnectEvent != null) OnDisconnectEvent();
                 Debug.Log("PoseEstimationServer Disconnected");
                 _client = default;
                 return;
@@ -193,7 +193,7 @@ namespace H2D.MediaPipe
                 _visibilities[i] = landmarks[i].visibility;
             }
 
-            onPoseReceived();
+            if (OnPoseReceivedEvent != null) OnPoseReceivedEvent();
         }
     }
 }

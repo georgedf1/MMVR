@@ -13,33 +13,32 @@ namespace H2D
         [SerializeField] private Vector3 leftCtrlToLeftHandOffset;
         [SerializeField] private Vector3 rightCtrlToRightHandOffset;
 
-        [Header("Wiring")]
-        [SerializeField] private Transform hmdTm;
-        [SerializeField] private Transform leftHandTm;
-        [SerializeField] private Transform rightHandTm;
+        [Header("Wiring")] 
+        [SerializeField] private PoseProvider poseProvider;
         [SerializeField] private PoseDebugSkeleton originalSkeleton;
         [SerializeField] private PoseDebugSkeleton alignedSkeleton;
 
         private Vector3[] _originalLandmarkPositions;
         private Vector3[] _alignedLandmarkPositions;
 
-        public struct AlignmentProblem
+        private static int NumLandmarks => PoseEstimationServer.NumLandmarks;
+
+        private struct AlignmentProblem
         {
             public Vector3[] LandmarksInCameraToAlign;
             public Quaternion PoseCameraRotation;
             public float PoseScaleFactor;
             public Pose HmdPose;
-            public Pose LeftHandPose;
-            public Pose RightHandPose;
+            public Pose LeftCtrlPose;
+            public Pose RightCtrlPose;
             public Vector3 HmdToHeadTrackerOffset;
             public Vector3 LeftCtrlToLeftHandOffset;
             public Vector3 RightCtrlToRightHandOffset;
         }
 
-        public static void Align(out Quaternion rotation, out Vector3 translation, AlignmentProblem alignmentProblem)
+        private static void Align(out Quaternion rotation, out Vector3 translation, AlignmentProblem alignmentProblem)
         {
             Vector3[] landmarks = alignmentProblem.LandmarksInCameraToAlign;
-            int numLandmarks = PoseEstimationServer.NumLandmarks;
 
             if (alignmentProblem.PoseScaleFactor == 0f)
             {
@@ -47,7 +46,7 @@ namespace H2D
             }
             
             // Fix chirality and rotation
-            for (int i = 0; i < numLandmarks; i++)
+            for (int i = 0; i < NumLandmarks; i++)
             {
                 Vector3 pos = alignmentProblem.PoseScaleFactor * landmarks[i];
                 pos.y = -pos.y;
@@ -82,8 +81,8 @@ namespace H2D
             Vector3[] refPositions =
             {
                 alignmentProblem.HmdPose.position + alignmentProblem.HmdPose.rotation * alignmentProblem.HmdToHeadTrackerOffset,
-                alignmentProblem.LeftHandPose.position + alignmentProblem.LeftHandPose.rotation * alignmentProblem.LeftCtrlToLeftHandOffset,
-                alignmentProblem.RightHandPose.position + alignmentProblem.RightHandPose.rotation * alignmentProblem.RightCtrlToRightHandOffset
+                alignmentProblem.LeftCtrlPose.position + alignmentProblem.LeftCtrlPose.rotation * alignmentProblem.LeftCtrlToLeftHandOffset,
+                alignmentProblem.RightCtrlPose.position + alignmentProblem.RightCtrlPose.rotation * alignmentProblem.RightCtrlToRightHandOffset
             };
 
             Vector3 srcCentroid = (srcPositions[0] + srcPositions[1] + srcPositions[2]) / 3;
@@ -108,7 +107,7 @@ namespace H2D
             refCentroid.y = srcCentroid.y; // no vertical translation permitted
             translation = refCentroid - srcCentroid;
 
-            for (int i = 0; i < PoseEstimationServer.NumLandmarks; i++) 
+            for (int i = 0; i < NumLandmarks; i++) 
             {
                 landmarks[i] = refCentroid + rotation * (landmarks[i] - srcCentroid);
             }
@@ -119,20 +118,15 @@ namespace H2D
             return _alignedLandmarkPositions;
         }
         
-        void Start()
+        void Awake()
         {
-            _originalLandmarkPositions = new Vector3[PoseEstimationServer.NumLandmarks];
-            _alignedLandmarkPositions = new Vector3[PoseEstimationServer.NumLandmarks];
+            _originalLandmarkPositions = new Vector3[NumLandmarks];
+            _alignedLandmarkPositions = new Vector3[NumLandmarks];
         }
 
         private void Update()
-        {            
-            // Get original landmark positions
-            for (int i = 0; i < PoseEstimationServer.NumLandmarks; i++)
-            {
-                _originalLandmarkPositions[i] = PoseEstimationServer.Instance.GetLandmarkPosInCamera(i);
-            }
-            
+        {
+            Array.Copy(poseProvider.GetLandmarksInCamera(), _originalLandmarkPositions, NumLandmarks);
             Array.Copy(_originalLandmarkPositions, _alignedLandmarkPositions, PoseEstimationServer.NumLandmarks);
 
             AlignmentProblem alignmentProblem = new()
@@ -140,9 +134,9 @@ namespace H2D
                 LandmarksInCameraToAlign = _alignedLandmarkPositions,
                 PoseCameraRotation = poseCameraRotation,
                 PoseScaleFactor = poseScaleFactor,
-                HmdPose = new() { position = hmdTm.position, rotation = hmdTm.rotation },
-                LeftHandPose = new() { position = leftHandTm.position, rotation = leftHandTm.rotation },
-                RightHandPose = new() { position = rightHandTm.position, rotation = rightHandTm.rotation },
+                HmdPose = poseProvider.GetHmdPose(),
+                LeftCtrlPose = poseProvider.GetLeftCtrlPose(),
+                RightCtrlPose = poseProvider.GetRightCtrlPose(),
                 HmdToHeadTrackerOffset = hmdToHeadTrackerOffset,
                 LeftCtrlToLeftHandOffset = leftCtrlToLeftHandOffset,
                 RightCtrlToRightHandOffset = rightCtrlToRightHandOffset
