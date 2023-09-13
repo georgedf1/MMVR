@@ -21,6 +21,7 @@ namespace MotionMatching
         [Header("Pose Estimation")] 
         [SerializeField] private bool usePoseEstimation;
         [SerializeField] private PoseAligner poseEstimationAligner;
+        [SerializeField] private float footSpringHalfLife;
         [Header("MM")]
         public MotionMatchingCharacterController CharacterController;
         public MotionMatchingData MMData;
@@ -89,6 +90,11 @@ namespace MotionMatching
         // Debug
         private GameObject CurrentRotationIndicator;
 
+        // gf321
+        private float3 _leftFootVelWorld;
+        private float3 _rightFootVelWorld;
+        private float3 _leftFootPosWorld;
+        private float3 _rightFootPosWorld;
 
         private void Awake()
         {
@@ -327,18 +333,38 @@ namespace MotionMatching
             if (usePoseEstimation)
             {
                 Vector3[] alignedLandmarks = poseEstimationAligner.GetAlignedLandmarkPositions();
+                Vector3 leftFootPosWorldGoal = alignedLandmarks[(byte)LandmarkType.LeftFootIndex];
+                Vector3 rightFootPosWorldGoal = alignedLandmarks[(byte)LandmarkType.RightFootIndex];
                 
-                Vector3 leftFootPosWorld = alignedLandmarks[(byte)LandmarkType.LeftHeel];
-                float3 leftFootPosLocal = GetPositionLocalCharacter(leftFootPosWorld);
+                float dt = Time.deltaTime;
+                Spring.SimpleSpringDamperImplicit(ref _leftFootPosWorld, ref _leftFootVelWorld, 
+                    leftFootPosWorldGoal, footSpringHalfLife, dt);
+                Spring.SimpleSpringDamperImplicit(ref _rightFootPosWorld, ref _rightFootVelWorld,
+                    rightFootPosWorldGoal, footSpringHalfLife, dt);
+                
+                // LeftFootPos feature
+                float3 leftFootPosLocal = GetPositionLocalCharacter(_leftFootPosWorld);
                 QueryFeature[currentFeatureSet.PoseOffset + 0] = leftFootPosLocal.x;
                 QueryFeature[currentFeatureSet.PoseOffset + 1] = leftFootPosLocal.y;
                 QueryFeature[currentFeatureSet.PoseOffset + 2] = leftFootPosLocal.z;
                 
-                Vector3 rightFootPosWorld = alignedLandmarks[(byte)LandmarkType.RightHeel];
-                float3 rightFootPosLocal = GetPositionLocalCharacter(rightFootPosWorld);
+                // RightFootPos feature
+                float3 rightFootPosLocal = GetPositionLocalCharacter(_rightFootPosWorld);
                 QueryFeature[currentFeatureSet.PoseOffset + 3] = rightFootPosLocal.x;
                 QueryFeature[currentFeatureSet.PoseOffset + 4] = rightFootPosLocal.y;
                 QueryFeature[currentFeatureSet.PoseOffset + 5] = rightFootPosLocal.z;
+
+                // LeftFootVel feature
+                float3 leftFootVelLocal = GetPositionLocalCharacter(_leftFootVelWorld);
+                QueryFeature[currentFeatureSet.PoseOffset + 9] = leftFootVelLocal.x;
+                QueryFeature[currentFeatureSet.PoseOffset + 10] = leftFootVelLocal.y;
+                QueryFeature[currentFeatureSet.PoseOffset + 11] = leftFootVelLocal.z;
+
+                // RightFootVel feature
+                float3 rightFootVelLocal = GetPositionLocalCharacter(_rightFootVelWorld);
+                QueryFeature[currentFeatureSet.PoseOffset + 12] = rightFootVelLocal.x;
+                QueryFeature[currentFeatureSet.PoseOffset + 13] = rightFootVelLocal.y;
+                QueryFeature[currentFeatureSet.PoseOffset + 14] = rightFootVelLocal.z;
             }
             
             // Now Current Feature Set
@@ -402,6 +428,8 @@ namespace MotionMatching
 
             return best;
         }
+        
+        
 
         private void FillTrajectory(NativeArray<float> vector, FeatureSet featureSet)
         {
@@ -756,6 +784,20 @@ namespace MotionMatching
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
+            // gf321
+            if (usePoseEstimation)
+            {
+                // Debug draw
+                Color prevColor = Gizmos.color;
+                Gizmos.color = Color.blue;
+                float dt = Time.deltaTime;
+                Gizmos.DrawSphere(_leftFootPosWorld, 0.05f);
+                Gizmos.DrawRay(_leftFootPosWorld, dt * _leftFootVelWorld);
+                Gizmos.DrawSphere(_rightFootPosWorld, 0.05f);
+                Gizmos.DrawRay(_rightFootPosWorld, dt * _rightFootVelWorld);
+                Gizmos.color = prevColor;
+            }
+            
             // Skeleton
             if (SkeletonTransforms == null || PoseSet == null) return;
 

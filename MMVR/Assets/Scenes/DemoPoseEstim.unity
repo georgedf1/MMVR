@@ -136,7 +136,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 100004, guid: 126d619cf4daa52469682f85c1378b4a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: 126d619cf4daa52469682f85c1378b4a, type: 3}
       propertyPath: m_RootOrder
@@ -631,7 +631,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &474313156
 Transform:
   m_ObjectHideFlags: 0
@@ -712,6 +712,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   usePoseEstimation: 1
   poseEstimationAligner: {fileID: 1665827514}
+  footSpringHalfLife: 0.005
   CharacterController: {fileID: 275778173}
   MMData: {fileID: 11400000, guid: a3adc94482efd8f47894c74d70aa0da0, type: 2}
   Calibrator: {fileID: 1725389248}
@@ -1086,7 +1087,7 @@ MonoBehaviour:
   LeftIKTarget: {fileID: 1030292549}
   RightIKTarget: {fileID: 1370596361}
   LookAtIKTarget: {fileID: 1290278861}
-  IsSimulator: 0
+  IsSimulator: 1
 --- !u!4 &1337947320
 Transform:
   m_ObjectHideFlags: 0
@@ -1461,7 +1462,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b2487fa2aac46f097479011f8b9fdcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mode: 0
+  mode: 1
   recording: {fileID: 4900000, guid: 2b3df310bfe54724888fa415a9d3e607, type: 3}
   loop: 1
   simHmdCorrection: {x: 0, y: 0, z: 0, w: 1}
@@ -1571,7 +1572,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SimulationBone: {fileID: 1786070640}
-  HMDDevice: {fileID: 40837619}
+  HMDDevice: {fileID: 1364905911}
   UseHMDForward: 0
   ResponsivenessPositions: 0.7
   ResponsivenessDirections: 0.7
@@ -1613,10 +1614,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 929779a26f28ed44bbc76099d7988d0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HMDDevice: {fileID: 40837619}
-  HMDBodyCenter: {fileID: 446502067}
-  LeftController: {fileID: 315907616}
-  RightController: {fileID: 1132669540}
+  HMDDevice: {fileID: 1364905911}
+  HMDBodyCenter: {fileID: 1449486075}
+  LeftController: {fileID: 230089936}
+  RightController: {fileID: 1288274719}
   FixedFramerate: 72
   GroundTruth: {fileID: 11400000, guid: bc858edefefd1374e91fa2c51e301fdb, type: 2}
   DirectionPredictorSource: {fileID: 5022602860645237092, guid: f146bfab0e0c6cf4d9e4f78e5bc17138, type: 3}
@@ -1656,6 +1657,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   usePoseEstimation: 1
   poseEstimationAligner: {fileID: 1665827514}
+  footSpringHalfLife: 0.005
   CharacterController: {fileID: 1783246766}
   MMData: {fileID: 11400000, guid: a3adc94482efd8f47894c74d70aa0da0, type: 2}
   Calibrator: {fileID: 1725389248}
