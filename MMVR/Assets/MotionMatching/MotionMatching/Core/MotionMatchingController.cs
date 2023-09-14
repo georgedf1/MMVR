@@ -7,7 +7,6 @@ using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections;
 using Unity.Jobs;
-using UnityEditor;
 
 namespace MotionMatching
 {
