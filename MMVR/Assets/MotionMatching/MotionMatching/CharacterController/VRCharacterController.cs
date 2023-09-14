@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using H2D;
+using H2D.MediaPipe;
 using UnityEngine;
 using Unity.Mathematics;
 using MotionMatching;
@@ -10,12 +12,21 @@ using TrajectoryFeature = MotionMatching.MotionMatchingData.TrajectoryFeature;
 [RequireComponent(typeof(VRDirectionPredictor))]
 public class VRCharacterController : MotionMatchingCharacterController
 {
+    public enum Mode
+    {
+        HMDForward,
+        PredictForward,
+        PoseEstimForward
+    };
+    
     [Header("Input Devices")]
     public Transform HMDDevice;
     
     // General ----------------------------------------------------------
     [Header("General")]
-    public bool UseHMDForward = false;
+    public Mode mode = Mode.PredictForward;
+    [SerializeField, Min(0f)] private float poseEstimHipDirHalfLife;
+    [SerializeField] private PoseAligner poseAligner;
     [Range(0.0f, 1.0f)] public float ResponsivenessPositions = 0.75f;
     [Range(0.0f, 1.0f)] public float ResponsivenessDirections = 0.75f;
     [Range(0.0f, 1.0f)] public float ThresholdNotifyVelocityChange = 0.1f;
@@ -39,7 +50,8 @@ public class VRCharacterController : MotionMatchingCharacterController
     private quaternion RotationHMD; // Rotation of the Simulation Object (controller) for HMD
     private float PreviousHMDDesiredSpeedSq;
     private VRDirectionPredictor DirectionPredictor;
-
+    private float3 leftToRightDir;
+    private float3 leftToRightDirVel;
 
     // FUNCTIONS ---------------------------------------------------------------
     private void Awake()
@@ -71,7 +83,29 @@ public class VRCharacterController : MotionMatchingCharacterController
             NotifyInputChangedQuickly();
         }
         PreviousHMDDesiredSpeedSq = sqDesiredVelocity;
-        tracker.DesiredRotation = UseHMDForward ? HMDDevice.rotation : DirectionPredictor.GetPredictedRotation();
+        
+        switch (mode) // Set desired rotation
+        {
+            case Mode.HMDForward:
+                tracker.DesiredRotation = HMDDevice.rotation;
+                break;
+            case Mode.PredictForward:
+                tracker.DesiredRotation = DirectionPredictor.GetPredictedRotation();
+                break;
+            case Mode.PoseEstimForward:
+                Vector3[] alignedLandmarks = poseAligner.GetAlignedLandmarkPositions();
+                Vector3 leftHipPos = alignedLandmarks[(int)LandmarkType.LeftHip];
+                Vector3 rightHipPos = alignedLandmarks[(int)LandmarkType.RightHip];
+                Spring.SimpleSpringDamperImplicit(ref leftToRightDir, ref leftToRightDirVel,
+                    rightHipPos - leftHipPos, poseEstimHipDirHalfLife, Time.deltaTime);
+                Vector3 hipsFwd = Vector3.Cross(leftToRightDir, Vector3.up); // left-hand rule
+                hipsFwd.y = 0f;
+                tracker.DesiredRotation = Quaternion.LookRotation(hipsFwd, Vector3.up);
+                break;
+            default:
+                Debug.LogError("Unsupported mode!");
+                break;
+        }
         quaternion desiredRotation = tracker.DesiredRotation;
 
         // Rotations
@@ -88,7 +122,7 @@ public class VRCharacterController : MotionMatchingCharacterController
         if (DoAdjustment) AdjustSimulationBone();
         if (DoClamping) ClampSimulationBone();
 
-        DirectionPredictor.SetEnabledDebug(!UseHMDForward);
+        DirectionPredictor.SetEnabledDebug(mode == Mode.PredictForward);
         DirectionPredictor.SetPositionDebug(SimulationBone.GetSkeletonTransforms()[0].position);
     }
 
@@ -388,6 +422,14 @@ public class VRCharacterController : MotionMatchingCharacterController
                 GizmosExtensions.DrawWireCircle(transformPos, MaxDistanceSimulationBoneAndObject, quaternion.identity);
             }
         }
+
+        // if (mode == Mode.PoseEstimForward)
+        // {
+        //     Color prevColor = Gizmos.color;
+        //     Gizmos.color = Color.magenta;
+        //     Gizmos.DrawRay(HMDDevice.position, leftToRightDir);
+        //     Gizmos.color = prevColor;
+        // }
     }
 #endif
 }

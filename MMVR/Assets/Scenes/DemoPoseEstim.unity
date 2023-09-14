@@ -457,7 +457,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SimulationBone: {fileID: 710769420}
   HMDDevice: {fileID: 446502067}
-  UseHMDForward: 0
+  mode: 2
+  poseEstimHipDirHalfLife: 0.1
+  poseAligner: {fileID: 1665827514}
   ResponsivenessPositions: 0.7
   ResponsivenessDirections: 0.7
   ThresholdNotifyVelocityChange: 0.2
@@ -1574,7 +1576,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SimulationBone: {fileID: 1786070640}
   HMDDevice: {fileID: 1364905911}
-  UseHMDForward: 0
+  mode: 2
+  poseEstimHipDirHalfLife: 0.1
+  poseAligner: {fileID: 1665827514}
   ResponsivenessPositions: 0.7
   ResponsivenessDirections: 0.7
   ThresholdNotifyVelocityChange: 0.2
