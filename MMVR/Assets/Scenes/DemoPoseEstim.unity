@@ -713,6 +713,7 @@ MonoBehaviour:
   usePoseEstimation: 1
   poseEstimationAligner: {fileID: 1665827514}
   footSpringHalfLife: 0.005
+  lerpToPoseEstimFeet: 0.25
   CharacterController: {fileID: 275778173}
   MMData: {fileID: 11400000, guid: a3adc94482efd8f47894c74d70aa0da0, type: 2}
   Calibrator: {fileID: 1725389248}
@@ -1463,7 +1464,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mode: 1
-  recording: {fileID: 4900000, guid: 2b3df310bfe54724888fa415a9d3e607, type: 3}
+  recording: {fileID: 4900000, guid: 0ced815de66a655448c113a1bae9fd90, type: 3}
   loop: 1
   simHmdCorrection: {x: 0, y: 0, z: 0, w: 1}
   simLeftCtrlCorrection: {x: 0, y: 0, z: 0.70710677, w: 0.70710677}
@@ -1658,6 +1659,7 @@ MonoBehaviour:
   usePoseEstimation: 1
   poseEstimationAligner: {fileID: 1665827514}
   footSpringHalfLife: 0.005
+  lerpToPoseEstimFeet: 0.25
   CharacterController: {fileID: 1783246766}
   MMData: {fileID: 11400000, guid: a3adc94482efd8f47894c74d70aa0da0, type: 2}
   Calibrator: {fileID: 1725389248}
@@ -1666,7 +1668,7 @@ MonoBehaviour:
   SearchTime: 0.1388889
   UseBVHSearch: 1
   Inertialize: 1
-  FootLock: 0
+  FootLock: 1
   FootUnlockDistance: 0.2
   InertializeHalfLife: 0.1
   Responsiveness: 1
@@ -1674,11 +1676,11 @@ MonoBehaviour:
   FeatureWeights:
   - 1
   - 1
+  - 2
+  - 2
   - 1
-  - 1
-  - 1
-  - 1
-  - 1
+  - 2
+  - 2
   SpheresRadius: 0.03
   DebugSkeleton: 1
   DebugCurrent: 1

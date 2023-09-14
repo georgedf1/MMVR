@@ -7,6 +7,7 @@ using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections;
 using Unity.Jobs;
+using UnityEditor;
 
 namespace MotionMatching
 {
@@ -22,6 +23,7 @@ namespace MotionMatching
         [SerializeField] private bool usePoseEstimation;
         [SerializeField] private PoseAligner poseEstimationAligner;
         [SerializeField] private float footSpringHalfLife;
+        [SerializeField, Range(0f, 1f)] private float lerpToPoseEstimFeet;
         [Header("MM")]
         public MotionMatchingCharacterController CharacterController;
         public MotionMatchingData MMData;
@@ -95,6 +97,10 @@ namespace MotionMatching
         private float3 _rightFootVelWorld;
         private float3 _leftFootPosWorld;
         private float3 _rightFootPosWorld;
+        private float3 _leftFootVelLocalOri;
+        private float3 _rightFootVelLocalOri;
+        private float3 _leftFootPosLocalOri;
+        private float3 _rightFootPosLocalOri;
 
         private void Awake()
         {
@@ -343,25 +349,45 @@ namespace MotionMatching
                     rightFootPosWorldGoal, footSpringHalfLife, dt);
                 
                 // LeftFootPos feature
-                float3 leftFootPosLocal = GetPositionLocalCharacter(_leftFootPosWorld);
+                _leftFootPosLocalOri = new float3(
+                    QueryFeature[currentFeatureSet.PoseOffset],
+                    QueryFeature[currentFeatureSet.PoseOffset + 1],
+                    QueryFeature[currentFeatureSet.PoseOffset + 2]);
+                float3 leftFootPosLocal = math.lerp(
+                    _leftFootPosLocalOri, GetPositionLocalCharacter(_leftFootPosWorld), lerpToPoseEstimFeet);
                 QueryFeature[currentFeatureSet.PoseOffset + 0] = leftFootPosLocal.x;
                 QueryFeature[currentFeatureSet.PoseOffset + 1] = leftFootPosLocal.y;
                 QueryFeature[currentFeatureSet.PoseOffset + 2] = leftFootPosLocal.z;
                 
-                // RightFootPos feature
-                float3 rightFootPosLocal = GetPositionLocalCharacter(_rightFootPosWorld);
+                // RightFootPos 
+                _rightFootPosLocalOri = new float3(
+                    QueryFeature[currentFeatureSet.PoseOffset + 3],
+                    QueryFeature[currentFeatureSet.PoseOffset + 4],
+                    QueryFeature[currentFeatureSet.PoseOffset + 5]);
+                float3 rightFootPosLocal = math.lerp(
+                    _rightFootPosLocalOri, GetPositionLocalCharacter(_rightFootPosWorld), lerpToPoseEstimFeet);
                 QueryFeature[currentFeatureSet.PoseOffset + 3] = rightFootPosLocal.x;
                 QueryFeature[currentFeatureSet.PoseOffset + 4] = rightFootPosLocal.y;
                 QueryFeature[currentFeatureSet.PoseOffset + 5] = rightFootPosLocal.z;
 
                 // LeftFootVel feature
-                float3 leftFootVelLocal = GetPositionLocalCharacter(_leftFootVelWorld);
+                _leftFootVelLocalOri = new float3(
+                    QueryFeature[currentFeatureSet.PoseOffset + 9],
+                    QueryFeature[currentFeatureSet.PoseOffset + 10],
+                    QueryFeature[currentFeatureSet.PoseOffset + 11]);
+                float3 leftFootVelLocal = math.lerp(
+                    _leftFootVelLocalOri, GetDirectionLocalCharacter(_leftFootVelWorld), lerpToPoseEstimFeet);
                 QueryFeature[currentFeatureSet.PoseOffset + 9] = leftFootVelLocal.x;
                 QueryFeature[currentFeatureSet.PoseOffset + 10] = leftFootVelLocal.y;
                 QueryFeature[currentFeatureSet.PoseOffset + 11] = leftFootVelLocal.z;
-
+                
                 // RightFootVel feature
-                float3 rightFootVelLocal = GetPositionLocalCharacter(_rightFootVelWorld);
+                _rightFootVelLocalOri = new float3(
+                    QueryFeature[currentFeatureSet.PoseOffset + 12],
+                    QueryFeature[currentFeatureSet.PoseOffset + 13],
+                    QueryFeature[currentFeatureSet.PoseOffset + 14]);
+                float3 rightFootVelLocal = math.lerp(
+                    _rightFootVelLocalOri, GetDirectionLocalCharacter(_rightFootVelWorld), lerpToPoseEstimFeet);
                 QueryFeature[currentFeatureSet.PoseOffset + 12] = rightFootVelLocal.x;
                 QueryFeature[currentFeatureSet.PoseOffset + 13] = rightFootVelLocal.y;
                 QueryFeature[currentFeatureSet.PoseOffset + 14] = rightFootVelLocal.z;
@@ -789,6 +815,14 @@ namespace MotionMatching
             {
                 // Debug draw
                 Color prevColor = Gizmos.color;
+                
+                if (Application.isPlaying)
+                {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawSphere(GetSkeletonTransforms()[0].TransformPoint(_leftFootPosLocalOri), 0.1f);
+                    Gizmos.DrawSphere(GetSkeletonTransforms()[0].TransformPoint(_rightFootPosLocalOri), 0.1f);
+                }
+
                 Gizmos.color = Color.blue;
                 float dt = Time.deltaTime;
                 Gizmos.DrawSphere(_leftFootPosWorld, 0.05f);
