@@ -7,6 +7,9 @@ namespace H2D
 {
     public class PoseProvider : MonoBehaviour
     {
+        public Action OnRecordingEnded;
+        public Action OnNewPoseReady;
+        
         private enum Mode
         {
             Live,
@@ -97,6 +100,19 @@ namespace H2D
                     throw new NotImplementedException("Unimplemented mode!");
             }
         }
+
+        public Pose GetTrackerPose()
+        {
+            switch (mode)
+            {
+                case Mode.Recording:
+                    return new Pose(simHipTrackerTm.position, simHipTrackerTm.rotation);
+                case Mode.Live:
+                    throw new NotImplementedException("Tracker not supported in Live mode!");
+                default:
+                    throw new NotImplementedException("Unimplemented mode!");
+            }
+        }
         
         private void Start()
         {
@@ -130,14 +146,18 @@ namespace H2D
             if (mode == Mode.Recording)
             {
                 if (_nextIdx == _numFrames)
-                {                
+                {
+                    if (OnRecordingEnded != null)
+                    {
+                        OnRecordingEnded();
+                    }
                     if (!loop) { return; }
                     _curIdx = 0;
                     _nextIdx = 1;
                     _time = 0f;
                 }
                 
-                if (_time > _data[_nextIdx].Time) 
+                if (_time > _data[_nextIdx].Time)
                 {
                     _nextIdx++;
                 }
@@ -152,11 +172,16 @@ namespace H2D
                     simHmdTm.position = curData.HeadPos;
                     simHmdTm.rotation = simHmdCorrection * curData.HeadRot;
                     simLeftCtrlTm.position = curData.LeftHandPos;
-                    simLeftCtrlTm.rotation = simLeftCtrlCorrection * curData.LeftHandRot;
+                    simLeftCtrlTm.rotation = curData.LeftHandRot * simLeftCtrlCorrection;
                     simRightCtrlTm.position = curData.RightHandPos;
-                    simRightCtrlTm.rotation = simRightCtrlCorrection * curData.RightHandRot;
+                    simRightCtrlTm.rotation = curData.RightHandRot * simRightCtrlCorrection;
                     simHipTrackerTm.position = curData.TrackerPos;
                     simHipTrackerTm.rotation = curData.TrackerRot;
+                    
+                    if (OnNewPoseReady != null)
+                    {
+                        OnNewPoseReady();
+                    }
                 }
                 
                 _time += Time.deltaTime;
@@ -168,6 +193,11 @@ namespace H2D
             for (int i = 0; i < NumLandmarks; i++)
             {
                 _landmarksInCamera[i] = PoseEstimationServer.Instance.GetLandmarkPosInCamera(i);
+            }
+            
+            if (OnNewPoseReady != null)
+            {
+                OnNewPoseReady();
             }
         }
     }

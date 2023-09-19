@@ -54,6 +54,11 @@ public class VRCharacterController : MotionMatchingCharacterController
     private float3 leftToRightDirVel;
 
     // FUNCTIONS ---------------------------------------------------------------
+    public Quaternion GetHipDirection()
+    {
+        return HMDTracker.DesiredRotation;
+    }
+    
     private void Awake()
     {
         DirectionPredictor = GetComponent<VRDirectionPredictor>();
