@@ -25,6 +25,8 @@ namespace H2D
             public Quaternion HeadRot;
             public Quaternion LeftHandRot;
             public Quaternion RightHandRot;
+            public Vector3 TrackerPos;
+            public Quaternion TrackerRot;
         }
 
         [Header("Config")]
@@ -41,6 +43,7 @@ namespace H2D
         [SerializeField] private Transform liveLeftCtrlTm;
         [SerializeField] private Transform simRightCtrlTm;
         [SerializeField] private Transform liveRightCtrlTm;
+        [SerializeField] private Transform simHipTrackerTm;
 
         private readonly List<PoseRecordingFrame> _data = new();
         private float _time;
@@ -152,6 +155,8 @@ namespace H2D
                     simLeftCtrlTm.rotation = simLeftCtrlCorrection * curData.LeftHandRot;
                     simRightCtrlTm.position = curData.RightHandPos;
                     simRightCtrlTm.rotation = simRightCtrlCorrection * curData.RightHandRot;
+                    simHipTrackerTm.position = curData.TrackerPos;
+                    simHipTrackerTm.rotation = curData.TrackerRot;
                 }
                 
                 _time += Time.deltaTime;
