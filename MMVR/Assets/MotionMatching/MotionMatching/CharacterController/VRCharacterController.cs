@@ -16,7 +16,8 @@ public class VRCharacterController : MotionMatchingCharacterController
     {
         HMDForward,
         PredictForward,
-        PoseEstimForward
+        PoseEstimForward,
+        HipTracker
     };
     
     [Header("Input Devices")]
@@ -26,6 +27,7 @@ public class VRCharacterController : MotionMatchingCharacterController
     [Header("General")]
     public Mode mode = Mode.PredictForward;
     [SerializeField, Min(0f)] private float poseEstimHipDirHalfLife;
+    [SerializeField] private PoseProvider poseProvider;
     [SerializeField] private PoseAligner poseAligner;
     [Range(0.0f, 1.0f)] public float ResponsivenessPositions = 0.75f;
     [Range(0.0f, 1.0f)] public float ResponsivenessDirections = 0.75f;
@@ -107,6 +109,9 @@ public class VRCharacterController : MotionMatchingCharacterController
                 hipsFwd.y = 0f;
                 tracker.DesiredRotation = Quaternion.LookRotation(hipsFwd, Vector3.up);
                 break;
+            case Mode.HipTracker:
+                tracker.DesiredRotation = poseProvider.GetTrackerPose().rotation;
+                break;
             default:
                 Debug.LogError("Unsupported mode!");
                 break;
@@ -129,6 +134,7 @@ public class VRCharacterController : MotionMatchingCharacterController
 
         DirectionPredictor.SetEnabledDebug(mode == Mode.PredictForward);
         DirectionPredictor.SetPositionDebug(SimulationBone.GetSkeletonTransforms()[0].position);
+        DirectionPredictor.ShowGizmoArrow = mode == Mode.PredictForward;
     }
 
     private void AdjustSimulationBone()

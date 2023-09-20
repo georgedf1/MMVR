@@ -19,7 +19,8 @@ public class VRDirectionPredictor : MonoBehaviour
     public NNModel DirectionPredictorSource;
     public Color PredictColor = new Color(1.0f, 0.0f, 0.5f, 1.0f);
 
-    [Header("Debug")]
+    [Header("Debug")] 
+    public bool ShowGizmoArrow;
     public bool ShowArrowIndicator = true;
     public GameObject ArrowIndicatorPrefab;
     public Vector3 ArrowIndicatorDisplacement;
@@ -337,6 +338,8 @@ public class VRDirectionPredictor : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
+        if (!ShowGizmoArrow) return; // gf321
+        
         // Skeleton
         if (SimulationBone == null) return;
 
