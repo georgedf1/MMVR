@@ -47,7 +47,8 @@ namespace H2D
         [SerializeField] private Transform simRightCtrlTm;
         [SerializeField] private Transform liveRightCtrlTm;
         [SerializeField] private Transform simHipTrackerTm;
-
+        [SerializeField] private Transform hipTrackerDebugTm;
+        
         private readonly List<PoseRecordingFrame> _data = new();
         private float _time;
         private int _numFrames;
@@ -177,6 +178,10 @@ namespace H2D
                     simRightCtrlTm.rotation = curData.RightHandRot * simRightCtrlCorrection;
                     simHipTrackerTm.position = curData.TrackerPos;
                     simHipTrackerTm.rotation = curData.TrackerRot;
+                    hipTrackerDebugTm.position = new Vector3(curData.TrackerPos.x, 0f, curData.TrackerPos.z);
+                    Vector3 hipTrackerDir = curData.TrackerRot * Vector3.forward;
+                    hipTrackerDir.y = 0f;
+                    hipTrackerDebugTm.rotation = Quaternion.FromToRotation(Vector3.forward, hipTrackerDir); 
                     
                     if (OnNewPoseReady != null)
                     {

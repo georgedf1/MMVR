@@ -134,7 +134,7 @@ public class VRCharacterController : MotionMatchingCharacterController
 
         DirectionPredictor.SetEnabledDebug(mode == Mode.PredictForward);
         DirectionPredictor.SetPositionDebug(SimulationBone.GetSkeletonTransforms()[0].position);
-        DirectionPredictor.ShowGizmoArrow = mode == Mode.PredictForward;
+        //DirectionPredictor.ShowGizmoArrow = mode == Mode.PredictForward;
     }
 
     private void AdjustSimulationBone()
