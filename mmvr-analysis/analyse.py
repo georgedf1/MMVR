@@ -20,5 +20,7 @@ for file_path in file_paths:
                 angles.append(float(data_str[2 * i + 1]))
     print('average:', np.average(angles))
     plt.plot(times, angles)
-    
+
+plt.xlabel("time (s)")
+plt.ylabel("angular error (degrees)")
 plt.show()
