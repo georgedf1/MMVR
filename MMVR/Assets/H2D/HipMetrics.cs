@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using MotionMatching;
 using UnityEditor.Rendering;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace H2D
     {
         [SerializeField] private bool write;
         [SerializeField] private string writePath;
-        [SerializeField] private VRCharacterController vrCharCtrl;
+        [SerializeField] private MotionMatchingController mmCtrl;
         [SerializeField] private PoseProvider poseProvider;
     
         private StreamWriter _writer;
@@ -49,7 +50,7 @@ namespace H2D
         {
             if (_isRecording)
             {
-                Vector3 charHipDir = vrCharCtrl.GetHipDirection() * Vector3.forward;
+                Vector3 charHipDir =  mmCtrl.GetSkeletonTransforms()[0].rotation* Vector3.forward;
                 charHipDir.y = 0f;
                 
                 Vector3 gtHipDir = poseProvider.GetTrackerPose().rotation * Vector3.forward;

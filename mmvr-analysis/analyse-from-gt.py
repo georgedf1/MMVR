@@ -4,7 +4,7 @@ import sys
 
 MIN_TIME = 2.0
 MAX_TIME = 50.0
-GT_FILE_PATH = ".\mmvr-hips-gt.txt"
+GT_FILE_PATH = "gt.txt"
 
 def read_times_and_angles(path):
     times = []

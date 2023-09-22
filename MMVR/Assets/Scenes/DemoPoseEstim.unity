@@ -123,6 +123,38 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &10368302
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 10368303}
+  m_Layer: 0
+  m_Name: HipTrackerDebug
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &10368303
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10368302}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1639527113}
+  m_Father: {fileID: 1697054133}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &40837618
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1180,14 +1212,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1314579184}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa9b0b00d19179d47bade38f0f9cbc8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   write: 0
   writePath: C:\Research\MMVR\mmvr-analysis\temp.txt
-  vrCharCtrl: {fileID: 1783246766}
+  mmCtrl: {fileID: 1786070640}
   poseProvider: {fileID: 1697054132}
 --- !u!4 &1314579186
 Transform:
@@ -1575,12 +1607,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1639527112}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0.5}
   m_LocalScale: {x: 0.05, y: 0.05, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2138213618}
+  m_Father: {fileID: 10368303}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1639527114
@@ -1740,6 +1772,7 @@ MonoBehaviour:
   simRightCtrlTm: {fileID: 1288274719}
   liveRightCtrlTm: {fileID: 1132669540}
   simHipTrackerTm: {fileID: 2138213618}
+  hipTrackerDebugTm: {fileID: 10368303}
 --- !u!4 &1697054133
 Transform:
   m_ObjectHideFlags: 0
@@ -1753,6 +1786,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2138213618}
+  - {fileID: 10368303}
   m_Father: {fileID: 0}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1929,7 +1963,7 @@ MonoBehaviour:
   usePoseEstimation: 1
   poseEstimationAligner: {fileID: 1665827514}
   footSpringHalfLife: 0.005
-  lerpToPoseEstimFeet: 0.25
+  lerpToPoseEstimFeet: 0
   CharacterController: {fileID: 1783246766}
   MMData: {fileID: 11400000, guid: a3adc94482efd8f47894c74d70aa0da0, type: 2}
   Calibrator: {fileID: 1725389248}
@@ -2147,8 +2181,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1639527113}
+  m_Children: []
   m_Father: {fileID: 1697054133}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
